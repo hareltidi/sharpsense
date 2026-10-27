@@ -1,0 +1,8 @@
+.vscode/**
+src/**
+out/**
+test-workspace/**
+Docs/**
+.gitignore
+tsconfig.json
+esbuild.mjs

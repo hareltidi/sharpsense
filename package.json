@@ -1,0 +1,232 @@
+{
+  "name": "sharpsense",
+  "displayName": "SharpSense",
+  "description": "Rider-style context-aware completions and Solution Explorer companion for Microsoft C# + Unity extensions (no fork).",
+  "version": "0.0.1",
+  "publisher": "sharpsense",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.137.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Other"
+  ],
+  "activationEvents": [
+    "onLanguage:csharp"
+  ],
+  "main": "./dist/extension.js",
+  "scripts": {
+    "compile": "node esbuild.mjs",
+    "build": "node esbuild.mjs",
+    "watch": "node esbuild.mjs --watch",
+    "vscode:prepublish": "npm run compile",
+    "package": "vsce package"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/vscode": "^1.137.0",
+    "esbuild": "^0.21.0",
+    "typescript": "^5.4.0"
+  },
+  "contributes": {
+    "configuration": {
+      "title": "SharpSense",
+      "properties": {
+        "sharpsense.smartParens": {
+          "type": "boolean",
+          "default": true,
+          "description": "Insert () on method/constructor invocation accept and place cursor inside. Also inserts () for callable keywords (typeof, nameof, sizeof)."
+        },
+        "sharpsense.smartGenerics": {
+          "type": "boolean",
+          "default": true,
+          "description": "Insert <> + () for non-inferrable generics, () only when inferrable."
+        },
+        "sharpsense.smartBackspace": {
+          "type": "boolean",
+          "default": true,
+          "description": "Backspace inside empty (), <>, [], {}, \"\" deletes the pair."
+        },
+        "sharpsense.backspace.unindentMode": {
+          "type": "string",
+          "enum": [
+            "toUnindent",
+            "toTabstop",
+            "toProper",
+            "none"
+          ],
+          "default": "toProper",
+          "description": "How backspace collapses leading indentation: to previous tabstop (toTabstop), previous line's indent (toUnindent), JetBrains-style proper indent (toProper), or default backspace (none)."
+        },
+        "sharpsense.tabOut": {
+          "type": "boolean",
+          "default": true,
+          "description": "Tab inside or directly before a closing bracket jumps past it instead of indenting."
+        },
+        "sharpsense.overtype": {
+          "type": "boolean",
+          "default": true,
+          "description": "Typing ), ], }, > or a quote directly before the same character moves past it instead of duplicating."
+        },
+        "sharpsense.postfixTemplates": {
+          "type": "boolean",
+          "default": true,
+          "description": "Dot-triggered postfix templates (.var, .if, .null, .for, .foreach, .return, .await, .using, .try, .throw, .cast, .as, .switch)."
+        },
+        "sharpsense.verboseLogging": {
+          "type": "boolean",
+          "default": false,
+          "description": "Log every context decision to the SharpSense output channel (diagnostics)."
+        },
+        "sharpsense.braceStyle": {
+          "type": "string",
+          "enum": [
+            "allman",
+            "k&r",
+            "inherit"
+          ],
+          "default": "allman",
+          "description": "Brace style for blocks SharpSense generates. inherit follows .editorconfig / file."
+        },
+        "sharpsense.smartSemicolon": {
+          "type": "boolean",
+          "default": true,
+          "description": "Insert ; after () when completing a method at statement end (e.g., GetUsers();). Disable to get () only."
+        },
+        "sharpsense.generate": {
+          "type": "boolean",
+          "default": true,
+          "description": "Lightweight in-solution Generate menu (ctor from fields, propfull, Equals+GetHashCode, ToString, implement/override) via syntactic type-body scan."
+        },
+        "sharpsense.completion.enterBehavior": {
+          "type": "string",
+          "enum": [
+            "insert",
+            "replace"
+          ],
+          "default": "insert",
+          "description": "Enter (accept suggestion) behavior: insert keeps text to the right, replace overwrites it."
+        },
+        "sharpsense.completion.tabBehavior": {
+          "type": "string",
+          "enum": [
+            "insert",
+            "replace"
+          ],
+          "default": "replace",
+          "description": "Tab (accept suggestion) behavior: replace overwrites text to the right, insert keeps it."
+        },
+        "sharpsense.typing.smartSurroundWithBraces": {
+          "type": "boolean",
+          "default": true,
+          "description": "Smart brace surround: when typing { with text selected or on a single-line if/else/for/foreach/while header, wraps the selection in a multi-line brace block per sharpsense.braceStyle."
+        }
+      }
+    },
+    "commands": [
+      {
+        "command": "sharpsense.showStatus",
+        "title": "SharpSense: Show Status",
+        "category": "SharpSense"
+      },
+      {
+        "command": "sharpsense.logContext",
+        "title": "SharpSense: Log Context Here",
+        "category": "SharpSense"
+      },
+      {
+        "command": "sharpsense.tabOut",
+        "title": "SharpSense: Jump Past Closing Bracket",
+        "category": "SharpSense"
+      },
+      {
+        "command": "sharpsense.deletePair",
+        "title": "SharpSense: Delete Empty Bracket Pair",
+        "category": "SharpSense"
+      },
+      {
+        "command": "sharpsense.acceptDecorated",
+        "title": "SharpSense: Accept Suggestion with Parens",
+        "category": "SharpSense"
+      },
+      {
+        "command": "sharpsense.acceptDecoratedInsert",
+        "title": "SharpSense: Accept Suggestion (Insert Mode)",
+        "category": "SharpSense"
+      },
+      {
+        "command": "sharpsense.acceptDecoratedReplace",
+        "title": "SharpSense: Accept Suggestion (Replace Mode)",
+        "category": "SharpSense"
+      },
+      {
+        "command": "sharpsense.surroundWith",
+        "title": "SharpSense: Surround Selection With\u00e2\u20ac\u00a6",
+        "category": "SharpSense"
+      },
+      {
+        "command": "sharpsense.completeStatement",
+        "title": "SharpSense: Complete Statement (add braces)",
+        "category": "SharpSense"
+      },
+      {
+        "command": "sharpsense.smartEnter",
+        "title": "SharpSense: Smart Enter (brace expansion)",
+        "category": "SharpSense"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "sharpsense.tabOut",
+        "key": "tab",
+        "when": "editorTextFocus && editorLangId == csharp && sharpsense.tabOutAvailable && !suggestWidgetVisible && !inSnippetMode"
+      },
+      {
+        "command": "sharpsense.tabOut",
+        "key": "tab",
+        "when": "editorTextFocus && editorLangId == csharp && sharpsense.tabOutAvailable && !suggestWidgetVisible && inSnippetMode"
+      },
+      {
+        "command": "sharpsense.deletePair",
+        "key": "backspace",
+        "when": "editorTextFocus && editorLangId == csharp && sharpsense.pairBackspaceAvailable && !suggestWidgetVisible"
+      },
+      {
+        "command": "sharpsense.acceptDecorated",
+        "key": "enter",
+        "when": "editorTextFocus && editorLangId == csharp && suggestWidgetVisible && acceptSuggestionOnEnter && suggestionMakesTextEdit",
+        "args": {
+          "trigger": "enter"
+        }
+      },
+      {
+        "command": "sharpsense.acceptDecorated",
+        "key": "tab",
+        "when": "editorTextFocus && editorLangId == csharp && suggestWidgetVisible && config.editor.tabCompletion != onlySnippets && !inSnippetMode",
+        "args": {
+          "trigger": "tab"
+        }
+      },
+      {
+        "command": "sharpsense.surroundWith",
+        "key": "ctrl+k ctrl+s",
+        "when": "editorTextFocus && editorLangId == csharp && editorHasSelection"
+      },
+      {
+        "command": "sharpsense.completeStatement",
+        "key": "ctrl+shift+enter",
+        "when": "editorTextFocus && editorLangId == csharp && !inSnippetMode && !suggestWidgetVisible"
+      },
+      {
+        "command": "sharpsense.smartEnter",
+        "key": "enter",
+        "when": "editorTextFocus && editorLangId == csharp && !suggestWidgetVisible && !inSnippetMode"
+      }
+    ]
+  },
+  "extensionPack": [
+    "ms-dotnettools.csharp",
+    "ms-dotnettools.csdevkit"
+  ]
+}
