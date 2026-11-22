@@ -1,0 +1,17 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Run Smart Enter And Backspace Extension",
+      "type": "extensionHost",
+      "request": "launch",
+      "args": [
+        "--extensionDevelopmentPath=${workspaceFolder}/smart-enter-and-backspace",
+        "${workspaceFolder}"
+      ],
+      "outFiles": ["${workspaceFolder}/smart-enter-and-backspace/dist/**/*.js"],
+      "preLaunchTask": "npm: compile - smart-enter-and-backspace",
+      "timeout": 120000
+    }
+  ]
+}

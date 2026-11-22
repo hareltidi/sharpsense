@@ -61,3 +61,20 @@ Hot-path predicates — no IPC. `detectInvokeContext(prefix, suffix) → InvokeC
 - `Docs/sharp-sense-spec.md` — authoritative architecture (v2 provider-wrapper → v3 shadow commit), matrix rules R1–R5, C-guards, bracket/postfix details.
 - `Docs/ROADMAP.md` — Phase 1 (completion engine) / Phase 2 (Dev Kit–backed Solution Explorer) / Phase 3 (Unity view) plan.
 - `test-workspace/MANUAL_CHECKLIST.md` — manual verification checklist for F5 Extension Host.
+
+### Sibling extension — `smart-enter-and-backspace/`
+
+A standalone, language-agnostic extraction of Smart Enter / Smart Backspace / Smart Brace Surround
+(no Roslyn, no completion providers). Same features, plus language families:
+
+- `src/languages.ts` — `LanguageFamily = 'braced' | 'indented' | 'generic'`; `profileFor(languageId)`.
+  Indented languages (python, yaml, ruby, fsharp, …) bypass every brace path and use nearest-indent backspace.
+- `src/smartEnter.ts` — `trySmartEnter(ed, settings, profile)`: `{|}` expansion, block-header braces,
+  control-header indent, missing `;`. Returns false for non-braced families.
+- `src/smartBackspace.ts` — `tryCollapseInteriorWhitespace`, `trySmartUnindent` (nearest-indent for indented).
+- `src/smartBraceSurround.ts` — selection wrap + orphan merge, braced family only.
+- `src/brackets.ts` — `type` / `deleteLeft` interception + `smartEnterAndBackspace.smartEnter` (Enter keybinding).
+- Build: `npm install && npm run compile` inside that folder; F5 → "Run Smart Enter And Backspace Extension".
+
+Do not enable both extensions' Enter/Backspace handlers at once — VS Code allows one handler per
+`type`/`deleteLeft` command and one Enter keybinding.

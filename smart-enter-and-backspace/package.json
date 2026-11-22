@@ -1,0 +1,115 @@
+{
+  "name": "smart-enter-and-backspace",
+  "displayName": "Smart Enter And Backspace",
+  "description": "Language-agnostic smart Enter (brace expansion, block-header braces, control-flow indentation) and smart Backspace (pair delete, indent collapse, blank-line join). Indentation-based languages get nearest-indent backspace and never see brace styles.",
+  "version": "0.1.0",
+  "publisher": "sharpsense",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other",
+    "Programming Languages",
+    "Formatters"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./dist/extension.js",
+  "scripts": {
+    "compile": "node esbuild.mjs",
+    "build": "node esbuild.mjs",
+    "watch": "node esbuild.mjs --watch",
+    "vscode:prepublish": "npm run compile",
+    "package": "vsce package"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/vscode": "^1.85.0",
+    "esbuild": "^0.21.0",
+    "typescript": "^5.4.0"
+  },
+  "contributes": {
+    "configuration": {
+      "title": "Smart Enter And Backspace",
+      "properties": {
+        "smartEnterAndBackspace.smartEnter": {
+          "type": "boolean",
+          "default": true,
+          "description": "Smart Enter: expand {|}, add braces after block headers, indent after control-flow headers, insert missing semicolons. Indentation-based languages are left to the editor's native auto-indent."
+        },
+        "smartEnterAndBackspace.braceExpansion": {
+          "type": "boolean",
+          "default": true,
+          "description": "Expand an empty {} pair into a multi-line block when pressing Enter between the braces."
+        },
+        "smartEnterAndBackspace.braceStyle": {
+          "type": "string",
+          "enum": [
+            "allman",
+            "k&r",
+            "inherit"
+          ],
+          "default": "inherit",
+          "description": "Brace style for blocks this extension generates. inherit follows the current file. Ignored entirely in indentation-based languages."
+        },
+        "smartEnterAndBackspace.smartSemicolon": {
+          "type": "boolean",
+          "default": true,
+          "description": "Insert a missing ; when pressing Enter at the end of an unclosed statement (languages that use semicolons only)."
+        },
+        "smartEnterAndBackspace.smartSurroundWithBraces": {
+          "type": "boolean",
+          "default": true,
+          "description": "Wrap a selection in a brace block when typing {, and merge a block typed below an unbraced control-flow header into that header."
+        },
+        "smartEnterAndBackspace.smartBackspace": {
+          "type": "boolean",
+          "default": true,
+          "description": "Smart Backspace: collapse interior whitespace in empty pairs, delete empty pairs in one stroke, collapse leading indentation, and erase whitespace-only lines."
+        },
+        "smartEnterAndBackspace.backspace.unindentMode": {
+          "type": "string",
+          "enum": [
+            "toUnindent",
+            "toTabstop",
+            "toProper",
+            "none"
+          ],
+          "default": "toProper",
+          "description": "How Backspace collapses leading indentation: toTabstop (previous tab stop), toUnindent (previous non-blank line's indent), toProper (join to previous line), none (native)."
+        },
+        "smartEnterAndBackspace.backspace.indentedLanguagesUseNearestIndent": {
+          "type": "boolean",
+          "default": true,
+          "description": "In indentation-based languages (Python, YAML, Ruby, F#, ...) always collapse leading indentation to the nearest surrounding indent, ignoring brace-oriented modes."
+        },
+        "smartEnterAndBackspace.overtype": {
+          "type": "boolean",
+          "default": true,
+          "description": "Typing a closer that already sits right after the caret steps over it instead of duplicating it (e.g. typing ) before an existing )). Also steps inside when typing an opener directly before its own empty pair."
+        },
+        "smartEnterAndBackspace.verboseLogging": {
+          "type": "boolean",
+          "default": false,
+          "description": "Log each Smart Enter / Smart Backspace decision to the Smart Enter And Backspace output channel."
+        }
+      }
+    },
+    "commands": [
+      {
+        "command": "smartEnterAndBackspace.smartEnter",
+        "title": "Smart Enter",
+        "category": "Smart Enter And Backspace"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "smartEnterAndBackspace.smartEnter",
+        "key": "enter",
+        "when": "editorTextFocus && !suggestWidgetVisible && !inSnippetMode"
+      }
+    ]
+  }
+}
